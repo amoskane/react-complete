@@ -1,13 +1,19 @@
-import React, { Fragment, useEffect } from 'react'
+import React, { Fragment, useEffect, useRef, useContext } from 'react'
 //import styled from 'styled-components';
 import classes from './Cockpit.module.css'
+import AuthContext from '../../context/auth-context'
 
 const Cockpit = props => {
+  const toggleBtnRef = useRef(null)
+  const authContext = useContext(AuthContext)
+
+  //useEffect runs after every render cycle
   useEffect(() => {
     console.log('[cockpit.js] useeffect happened')
     const timer = setTimeout(() => {
       console.log('[cockpit.js] got data')
     }, 1000)
+    toggleBtnRef.current.click()
     // runs when component gets destoyed if you have the [] argument
     // replaces componentWillUnmount
     return () => {
@@ -42,15 +48,22 @@ const Cockpit = props => {
   return (
     <Fragment>
       <h1>{props.title}</h1>
-      <button className={btnClass.join(' ')} onClick={props.showPersonsHandler}>
+      <button
+        ref={toggleBtnRef}
+        className={btnClass.join(' ')}
+        onClick={props.showPersonsHandler}
+      >
         Toggle Persons
       </button>
+      {/* <AuthContext.Consumer>
+        {context => <button onClick={context.loginMethod}>Log In</button>}
+      </AuthContext.Consumer> */}
+      <button onClick={authContext.loginMethod}>Log In</button>
       <p className={assignedClasses.join(' ')}>now it's really working!</p>
     </Fragment>
   )
 }
 
 // replacement for shouldComponentUpdate
-// when the parent updates, does this need to update?
-// Then don't.
+// don't use if when the parent updates, this need to update
 export default React.memo(Cockpit)

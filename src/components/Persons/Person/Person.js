@@ -3,8 +3,21 @@ import './person.css'
 // import styled from 'styled-components'
 // import Aux from '../../../hoc/Aux'
 import WithClass from '../../../hoc/WithClass'
+import PropTypes from 'prop-types'
+//import { render } from '@testing-library/react'
+import AuthContext from '../../../context/auth-context'
 
 class Person extends React.Component {
+  //class based only, 16.6 and up
+  //can be accessed from outside without an instantiation
+  //if you need to access the context outside of the jsx
+  static contextType = AuthContext
+
+  componentDidMount() {
+    this.inputElement.focus()
+    console.log(this.context.loginMethod)
+  }
+
   // const rnd = Math.random();
   // if (rnd < 0.5) {
   //   throw new Error('Something went wrong');
@@ -32,12 +45,25 @@ class Person extends React.Component {
 
     return (
       <WithClass classes='person'>
+        {/* <AuthContext.Consumer>
+          {context =>
+            context.authenticated ? <p>Authenticated!</p> : <p>Please Log In</p>
+          }
+        </AuthContext.Consumer> */}
+        {this.context.authenticated ? (
+          <p>Authenticated!</p>
+        ) : (
+          <p>Please Log In</p>
+        )}
         <p onClick={this.props.clicker}>
           I'm a {this.props.name} and I am {this.props.age} years old!
         </p>
         <p>{this.props.children}</p>
         <input
           type='text'
+          ref={inputEl => {
+            this.inputElement = inputEl
+          }}
           onChange={this.props.changed}
           value={this.props.name}
         />
@@ -61,6 +87,48 @@ class Person extends React.Component {
   }
 }
 
+Person.propTypes = {
+  name: PropTypes.string,
+  click: PropTypes.func,
+  age: PropTypes.number,
+  changed: PropTypes.func
+}
+
 export default Person
 
-//
+//selects the first input b/c querySelector picks 1st
+// componentDidMount runs after every render cycle
+// componentDidMount(){
+//   document.querySelector('input').focus()
+// }
+
+// class components only, will select the last input rendered
+// componentDidMount(){
+//   this.inputElement.focus()
+// }
+
+// render(){
+//   return (
+//     <input
+//       type='text'
+//       ref={(inputEl) => {this.inputElement = inputEl}}
+//           onChange={this.props.changed}
+//           value={this.props.name}
+//         />
+//   )
+// }
+
+//class component only also:
+// constructor(props){
+//   super(props)
+//   this.inputElementRef = React.createRef()
+// }
+
+// componentDidMount(){
+//   this.inputElementRef.current.focus()
+// }
+
+//       ref={this.inputElementRef}
+//           onChange={this.props.changed}
+//           value={this.props.name}
+//         />
